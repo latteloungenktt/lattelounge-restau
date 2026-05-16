@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commandes Live – Latte Lounge</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0D0D0D; --surface:#161616; --card:#1E1E1E; --border:#2A2A2A;
+    --gold:#C9A84C; --gold2:#F0D080; --red:#D64045; --green:#3DAA6E;
+    --orange:#E07B39; --blue:#3A7BD5; --purple:#8B5CF6;
+    --text:#F0EDE8; --muted:#888;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+  /* ── LOGIN ── */
+  #loginScreen{position:fixed;inset:0;z-index:999;background:linear-gradient(135deg,#0a0800,#1a1200);display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .lg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,rgba(201,168,76,.15),transparent 65%);pointer-events:none;}
+  .ll{font-family:'Playfair Display',serif;font-size:34px;font-weight:900;color:var(--gold);letter-spacing:4px;margin-bottom:4px;position:relative;}
+  .ls{font-size:11px;color:var(--muted);letter-spacing:4px;margin-bottom:36px;position:relative;}
+  .lb{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:30px 34px;width:320px;box-shadow:0 30px 80px rgba(0,0,0,.6);}
+  .lt{font-family:'Playfair Display',serif;font-size:18px;color:var(--text);text-align:center;margin-bottom:6px;}
+  .lh{font-size:12px;color:var(--muted);text-align:center;margin-bottom:22px;}
+  .lw{position:relative;margin-bottom:12px;}
+  .li{width:100%;padding:12px 42px 12px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Mono',monospace;font-size:16px;letter-spacing:3px;outline:none;transition:border-color .2s;}
+  .li:focus{border-color:var(--gold);}
+  .li::placeholder{letter-spacing:1px;font-size:13px;color:var(--muted);font-family:'DM Sans',sans-serif;}
+  .le-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;}
+  .le{color:var(--red);font-size:12px;text-align:center;margin-bottom:10px;min-height:16px;}
+  .lbtn{width:100%;padding:13px;background:var(--gold);border:none;border-radius:10px;font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#000;cursor:pointer;}
+  .lbtn:hover{background:var(--gold2);}
+
+  /* ── SOUND UNLOCK BANNER ── */
+  #soundBanner{background:linear-gradient(135deg,#1a0a00,#2d1500);border-bottom:2px solid var(--orange);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .sound-unlock-btn{background:var(--orange);border:none;border-radius:10px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:10px 20px;cursor:pointer;transition:all .2s;}
+  .sound-unlock-btn:hover{filter:brightness(1.1);}
+  #soundBanner.hidden{display:none;}
+
+  /* ── HEADER ── */
+  header{background:linear-gradient(135deg,#1a1200,#2d1f00,#1a1200);border-bottom:1px solid var(--gold);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50;}
+  .hlogo{font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:var(--gold);letter-spacing:3px;}
+  .hsublogo{font-size:10px;color:var(--muted);letter-spacing:2px;}
+  .hright{display:flex;align-items:center;gap:8px;}
+  .badge-new{background:var(--red);color:#fff;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;border-radius:20px;padding:4px 12px;animation:blink 1s infinite;display:none;}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
+  .hclock{font-family:'DM Mono',monospace;font-size:13px;color:var(--gold2);}
+  .hbtn{background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:12px;padding:5px 12px;cursor:pointer;}
+  .hbtn:hover{border-color:var(--red);color:var(--red);}
+
+  /* ── STATS ── */
+  .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:14px 20px;}
+  .sc{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;}
+  .sc-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:5px;}
+  .sc-v{font-family:'Playfair Display',serif;font-size:22px;}
+
+  /* ── FILTERS ── */
+  .filters{display:flex;gap:8px;padding:0 20px 14px;flex-wrap:wrap;}
+  .fbtn{background:var(--card);border:1px solid var(--border);color:var(--muted);font-size:12px;font-weight:600;padding:6px 14px;border-radius:20px;cursor:pointer;transition:all .2s;}
+  .fbtn.active{background:var(--gold);border-color:var(--gold);color:#000;}
+
+  /* ── ORDERS GRID ── */
+  .ogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;padding:0 20px 30px;}
+  .oempty{text-align:center;color:var(--muted);padding:60px 20px;grid-column:1/-1;font-size:14px;line-height:2;}
+  .oempty-icon{font-size:48px;margin-bottom:12px;}
+
+  /* ── ORDER CARD ── */
+  .ocard{background:var(--surface);border-radius:16px;overflow:hidden;animation:pop .3s ease;}
+  @keyframes pop{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
+  .ocard.envoye    {border:2px solid var(--red);   box-shadow:0 0 20px rgba(214,64,69,.2);}
+  .ocard.confirme  {border:2px solid var(--blue);}
+  .ocard.preparation{border:2px solid var(--orange);}
+  .ocard.livraison {border:2px solid var(--purple);}
+  .ocard.livre     {border:2px solid var(--green);opacity:.7;}
+  .ocard.annule    {border:2px solid var(--muted);opacity:.5;}
+
+  /* Card header */
+  .ch{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);}
+  .ch-left{}
+  .ch-code{font-family:'DM Mono',monospace;font-size:15px;color:var(--gold);font-weight:700;letter-spacing:2px;}
+  .ch-time{font-size:11px;color:var(--muted);margin-top:2px;}
+  .ch-badge{font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;white-space:nowrap;}
+  .ch-badge.envoye    {background:rgba(214,64,69,.15);color:var(--red);border:1px solid var(--red);}
+  .ch-badge.confirme  {background:rgba(58,123,213,.15);color:var(--blue);border:1px solid var(--blue);}
+  .ch-badge.preparation{background:rgba(224,123,57,.15);color:var(--orange);border:1px solid var(--orange);}
+  .ch-badge.livraison {background:rgba(139,92,246,.15);color:var(--purple);border:1px solid var(--purple);}
+  .ch-badge.livre     {background:rgba(61,170,110,.15);color:var(--green);border:1px solid var(--green);}
+  .ch-badge.annule    {background:rgba(136,136,136,.15);color:var(--muted);border:1px solid var(--muted);}
+
+  /* Client info */
+  .cinfo{padding:10px 16px;border-bottom:1px solid var(--border);background:var(--card);}
+  .cinfo-name{font-size:13px;font-weight:600;}
+  .cinfo-phone{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin-top:2px;}
+  .cinfo-pay{font-size:11px;color:var(--gold2);margin-top:3px;}
+
+  /* Items */
+  .citems{padding:10px 16px;border-bottom:1px solid var(--border);}
+  .citem-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);padding:3px 0;border-bottom:1px solid var(--border);}
+  .citem-row:last-child{border-bottom:none;}
+  .ctotal{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--card);border-bottom:1px solid var(--border);}
+  .ctotal-left{font-size:12px;color:var(--muted);}
+  .ctotal-val{font-family:'DM Mono',monospace;font-size:16px;color:var(--gold);font-weight:700;}
+  .cnotes{padding:8px 16px;font-size:12px;color:var(--gold2);background:rgba(201,168,76,.05);border-bottom:1px solid var(--border);}
+
+  /* ── STATUS BUTTONS — clearly visible ── */
+  .cstatus{padding:14px 16px;border-bottom:1px solid var(--border);}
+  .cstatus-title{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;font-weight:700;}
+  .cstatus-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .cstatus-grid button{padding:10px 6px;border-radius:10px;border:2px solid transparent;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;text-align:center;}
+  .cstatus-grid button:hover{transform:scale(1.03);}
+  .cstatus-grid button.current{border-color:#fff!important;transform:scale(1.05);box-shadow:0 4px 12px rgba(0,0,0,.3);}
+  .btn-st-confirme   {background:var(--blue);   color:#fff;}
+  .btn-st-preparation{background:var(--orange);  color:#fff;}
+  .btn-st-livraison  {background:var(--purple);  color:#fff;}
+  .btn-st-livre      {background:var(--green);   color:#fff;}
+
+  /* Actions */
+  .cactions{display:flex;gap:8px;padding:10px 16px;}
+  .ca-map{flex:1;padding:10px;background:var(--blue);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;}
+  .ca-del{flex:1;padding:10px;background:transparent;border:2px solid var(--red);border-radius:10px;color:var(--red);font-size:13px;font-weight:700;cursor:pointer;}
+  .ca-del:hover{background:rgba(214,64,69,.1);}
+
+  /* Toast */
+  .toast{position:fixed;top:80px;right:20px;background:var(--red);color:#fff;border-radius:14px;padding:14px 22px;font-size:15px;font-weight:700;box-shadow:0 8px 32px rgba(214,64,69,.5);z-index:500;display:none;}
+  @keyframes tin{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="lg"></div>
+  <div class="ll">Latte Lounge</div>
+  <div class="ls">COMMANDES EN LIGNE · TEMPS RÉEL</div>
+  <div class="lb">
+    <div class="lt">🔐 Accès Gestionnaire</div>
+    <div class="lh">Entrez votre mot de passe</div>
+    <div class="lw">
+      <input class="li" type="password" id="pwdInput" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')checkPwd()">
+      <button class="le-btn" onclick="togglePwd()">👁</button>
+    </div>
+    <div class="le" id="loginError"></div>
+    <button class="lbtn" onclick="checkPwd()">Accéder →</button>
+  </div>
+</div>
+
+<!-- SOUND UNLOCK BANNER -->
+<div id="soundBanner">
+  <div>
+    <div style="font-size:14px;font-weight:700;color:var(--orange)">🔔 Activez le son des alertes</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:2px">Cliquez une fois pour recevoir des alertes sonores à chaque nouvelle commande</div>
+  </div>
+  <button class="sound-unlock-btn" onclick="unlockSound()">🔔 Activer le son</button>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div>
+    <div class="hlogo">Latte Lounge</div>
+    <div class="hsublogo">Commandes · Temps réel 🔴</div>
+  </div>
+  <div class="hright">
+    <span class="badge-new" id="badgeNew">0 nouvelle(s)</span>
+    <div class="hclock" id="clock2">--:--:--</div>
+    <button class="hbtn" onclick="logout()">⏏ Déco</button>
+  </div>
+</header>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="sc"><div class="sc-l">Nouvelles</div><div class="sc-v" style="color:var(--red)" id="sEnv">0</div></div>
+  <div class="sc"><div class="sc-l">Confirmées</div><div class="sc-v" style="color:var(--blue)" id="sCon">0</div></div>
+  <div class="sc"><div class="sc-l">Préparation</div><div class="sc-v" style="color:var(--orange)" id="sPre">0</div></div>
+  <div class="sc"><div class="sc-l">Livraison</div><div class="sc-v" style="color:var(--purple)" id="sLiv">0</div></div>
+  <div class="sc"><div class="sc-l">Total du jour</div><div class="sc-v" style="color:var(--gold)" id="sTot">0 MRU</div></div>
+</div>
+
+<!-- FILTERS -->
+<div class="filters">
+  <button class="fbtn active" onclick="setFilter('tous',this)">Toutes</button>
+  <button class="fbtn" onclick="setFilter('envoye',this)">🔴 Nouvelles</button>
+  <button class="fbtn" onclick="setFilter('confirme',this)">🔵 Confirmées</button>
+  <button class="fbtn" onclick="setFilter('preparation',this)">🟠 Préparation</button>
+  <button class="fbtn" onclick="setFilter('livraison',this)">🟣 Livraison</button>
+  <button class="fbtn" onclick="setFilter('livre',this)">✅ Livrées</button>
+</div>
+
+<!-- ORDERS -->
+<div class="ogrid" id="ordersGrid">
+  <div class="oempty"><div class="oempty-icon">📭</div>En attente de commandes...<br><small>Les commandes apparaissent ici en temps réel</small></div>
+</div>
+
+<div class="toast" id="toast">🛎 Nouvelle commande !</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onChildAdded, onChildChanged, onChildRemoved, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const PASSWORD = 'Mauritanie2026';
+const FB = {
+  apiKey:"AIzaSyBZnorgx0FgFzQk-ynMWLWAGblA1797wL8",
+  authDomain:"latte-lounge-caisse.firebaseapp.com",
+  databaseURL:"https://latte-lounge-caisse-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:"latte-lounge-caisse",
+  storageBucket:"latte-lounge-caisse.firebasestorage.app",
+  messagingSenderId:"864095614648",
+  appId:"1:864095614648:web:4d827e02772b5b73fca64d"
+};
+
+let db, orders={}, currentFilter='tous', isFirstLoad=true;
+let audioCtx=null, soundUnlocked=false;
+
+// ── AUTH ──
+window.checkPwd=function(){
+  const val=document.getElementById('pwdInput').value;
+  if(val===PASSWORD){
+    const ls=document.getElementById('loginScreen');
+    ls.style.transition='opacity .4s';ls.style.opacity='0';
+    setTimeout(()=>{ls.style.display='none';},400);
+    sessionStorage.setItem('orders_auth','1');
+    startFirebase();
+  } else {
+    const err=document.getElementById('loginError');
+    err.textContent='❌ Mot de passe incorrect';
+    document.getElementById('pwdInput').value='';
+    setTimeout(()=>err.textContent='',3000);
+  }
+};
+window.togglePwd=function(){const i=document.getElementById('pwdInput');i.type=i.type==='password'?'text':'password';};
+window.logout=function(){if(!confirm('Se déconnecter ?'))return;sessionStorage.removeItem('orders_auth');location.reload();};
+
+if(sessionStorage.getItem('orders_auth')==='1'){
+  document.getElementById('loginScreen').style.display='none';
+  startFirebase();
+}
+
+// ── CLOCK ──
+setInterval(()=>document.getElementById('clock2').textContent=new Date().toLocaleTimeString('fr-FR'),1000);
+document.getElementById('clock2').textContent=new Date().toLocaleTimeString('fr-FR');
+
+// ── SOUND ──
+window.unlockSound=function(){
+  try{
+    audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    // Play silent sound to unlock
+    const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    o.connect(g);g.connect(audioCtx.destination);
+    g.gain.setValueAtTime(0,audioCtx.currentTime);
+    o.start();o.stop(audioCtx.currentTime+0.001);
+    soundUnlocked=true;
+    document.getElementById('soundBanner').classList.add('hidden');
+    // Play test sound
+    setTimeout(()=>playAlert(),200);
+  }catch(e){console.log('Sound error:',e);}
+};
+
+function playAlert(){
+  if(!soundUnlocked||!audioCtx)return;
+  try{
+    [[523,.0],[659,.18],[784,.36],[1047,.54]].forEach(([freq,t])=>{
+      const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.connect(g);g.connect(audioCtx.destination);
+      o.frequency.value=freq;o.type='sine';
+      g.gain.setValueAtTime(0,audioCtx.currentTime+t);
+      g.gain.linearRampToValueAtTime(0.4,audioCtx.currentTime+t+0.06);
+      g.gain.linearRampToValueAtTime(0,audioCtx.currentTime+t+0.22);
+      o.start(audioCtx.currentTime+t);
+      o.stop(audioCtx.currentTime+t+0.28);
+    });
+  }catch(e){}
+}
+
+// ── FIREBASE ──
+function startFirebase(){
+  const app=initializeApp(FB);
+  db=getDatabase(app);
+  const ordersRef=ref(db,'commandes');
+  onChildAdded(ordersRef,snap=>{
+    orders[snap.key]={...snap.val(),_key:snap.key};
+    if(!isFirstLoad){playAlert();showToast();}
+    renderOrders();updateStats();
+  });
+  onChildChanged(ordersRef,snap=>{
+    orders[snap.key]={...snap.val(),_key:snap.key};
+    renderOrders();updateStats();
+  });
+  onChildRemoved(ordersRef,snap=>{
+    delete orders[snap.key];
+    renderOrders();updateStats();
+  });
+  setTimeout(()=>isFirstLoad=false,2500);
+}
+
+function showToast(){
+  const t=document.getElementById('toast');
+  t.style.display='block';t.style.animation='tin .4s cubic-bezier(.34,1.56,.64,1)';
+  setTimeout(()=>t.style.display='none',4000);
+}
+
+// ── FILTER ──
+window.setFilter=function(f,btn){
+  currentFilter=f;
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');renderOrders();
+};
+
+// ── STATS ──
+function updateStats(){
+  const all=Object.values(orders);
+  document.getElementById('sEnv').textContent=all.filter(o=>o.status==='envoye').length;
+  document.getElementById('sCon').textContent=all.filter(o=>o.status==='confirme').length;
+  document.getElementById('sPre').textContent=all.filter(o=>o.status==='preparation').length;
+  document.getElementById('sLiv').textContent=all.filter(o=>o.status==='livraison').length;
+  document.getElementById('sTot').textContent=all.reduce((s,o)=>s+(o.total||0),0).toLocaleString('fr-FR')+' MRU';
+  const n=all.filter(o=>o.status==='envoye').length;
+  const badge=document.getElementById('badgeNew');
+  badge.style.display=n>0?'block':'none';
+  badge.textContent=n+' nouvelle(s)';
+}
+
+// ── STATUS LABELS ──
+const STATUS_LABELS={
+  envoye:'📤 Nouvelle',confirme:'✅ Confirmée',
+  preparation:'🍳 Préparation',livraison:'🛵 En livraison',
+  livre:'🎉 Livrée',annule:'❌ Annulée'
+};
+
+// ── RENDER ──
+function renderOrders(){
+  const grid=document.getElementById('ordersGrid');
+  let list=Object.values(orders).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+  if(currentFilter!=='tous') list=list.filter(o=>o.status===currentFilter);
+  if(!list.length){
+    grid.innerHTML=`<div class="oempty"><div class="oempty-icon">📭</div>${currentFilter==='tous'?'En attente de commandes...<br><small>Les commandes apparaissent ici en temps réel</small>':'Aucune commande dans cette catégorie'}</div>`;
+    return;
+  }
+  grid.innerHTML='';
+  list.forEach(order=>{
+    const key=order._key;
+    const st=order.status||'envoye';
+    const stLabel=STATUS_LABELS[st]||st;
+    const itemsHtml=(order.items||[]).map(it=>`<div class="citem-row"><span>${it.name} × ${it.qty}</span><span>${it.subtotal} MRU</span></div>`).join('');
+    const mapBtn=order.localisation?`<button class="ca-map" onclick="window.open('${order.localisation.mapsLink}','_blank')">📍 Maps (${order.localisation.distance} km)</button>`:'';
+
+    // Status buttons — 4 action buttons (all except 'envoye')
+    const statusActions=[
+      {key:'confirme',   label:'✅ Confirmer',        cls:'btn-st-confirme'},
+      {key:'preparation',label:'🍳 En préparation',   cls:'btn-st-preparation'},
+      {key:'livraison',  label:'🛵 En livraison',     cls:'btn-st-livraison'},
+      {key:'livre',      label:'🎉 Livrée',            cls:'btn-st-livre'},
+    ];
+
+    const statusBtnsHtml=statusActions.map(s=>`
+      <button class="${s.cls}${st===s.key?' current':''}"
+        onclick="setStatus('${key}','${s.key}')"
+        style="padding:10px 6px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;border:2px solid ${st===s.key?'#fff':'transparent'};">
+        ${s.label}
+      </button>`).join('');
+
+    const card=document.createElement('div');
+    card.className=`ocard ${st}`;
+    card.id='card-'+key;
+    card.innerHTML=`
+      <div class="ch">
+        <div class="ch-left">
+          <div class="ch-code">#${order.trackingCode||'—'}</div>
+          <div class="ch-time">${order.date||''} · ${order.time||''}</div>
+        </div>
+        <span class="ch-badge ${st}">${stLabel}</span>
+      </div>
+      <div class="cinfo">
+        <div class="cinfo-name">👤 ${order.clientName||'—'}</div>
+        <div class="cinfo-phone">📞 ${order.clientPhone||'—'}</div>
+        <div class="cinfo-pay">💳 ${order.paiement||''}</div>
+      </div>
+      <div class="citems">${itemsHtml}</div>
+      <div class="ctotal">
+        <div class="ctotal-left">${order.fraisLivraison?'🛵 Livraison: '+order.fraisLivraison+' MRU':''}</div>
+        <div class="ctotal-val">TOTAL: ${order.total} MRU</div>
+      </div>
+      ${order.notes?`<div class="cnotes">📝 ${order.notes}</div>`:''}
+      <div class="cstatus">
+        <div class="cstatus-title">📋 Changer le statut de la commande</div>
+        <div class="cstatus-grid">${statusBtnsHtml}</div>
+      </div>
+      <div class="cactions">
+        ${mapBtn}
+        <button class="ca-del" onclick="cancelOrder('${key}')">❌ Annuler la commande</button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// ── ACTIONS ──
+window.setStatus=async function(key,status){
+  try{
+    await update(ref(db,`commandes/${key}`),{status});
+    // Si livrée, supprimer automatiquement après 30 secondes
+    if(status==='livre'){
+      setTimeout(async()=>{
+        try{ await remove(ref(db,`commandes/${key}`)); }catch(e){}
+      }, 30000);
+    }
+  }catch(e){alert('Erreur: '+e.message);}
+};
+
+window.cancelOrder=async function(key){
+  if(!confirm('Annuler cette commande ? Le client sera informé.'))return;
+  try{
+    await update(ref(db,`commandes/${key}`),{status:'annule'});
+    // Force UI update immediately
+    if(orders[key]) orders[key].status='annule';
+    renderOrders();
+    updateStats();
+  }catch(e){alert('Erreur: '+e.message);}
+};
+</script>
+</body>
+</html>
