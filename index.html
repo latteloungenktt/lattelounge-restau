@@ -112,6 +112,7 @@
   .cstatus-grid button.current{border-color:#fff!important;transform:scale(1.05);box-shadow:0 4px 12px rgba(0,0,0,.3);}
   .btn-st-confirme   {background:var(--blue);   color:#fff;}
   .btn-st-preparation{background:var(--orange);  color:#fff;}
+  .btn-st-attente    {background:#E07B39;         color:#fff;}
   .btn-st-livraison  {background:var(--purple);  color:#fff;}
   .btn-st-livre      {background:var(--green);   color:#fff;}
 
@@ -311,7 +312,7 @@ function updateStats(){
   document.getElementById('sEnv').textContent=all.filter(o=>o.status==='envoye').length;
   document.getElementById('sCon').textContent=all.filter(o=>o.status==='confirme').length;
   document.getElementById('sPre').textContent=all.filter(o=>o.status==='preparation').length;
-  document.getElementById('sLiv').textContent=all.filter(o=>o.status==='livraison').length;
+  document.getElementById('sLiv').textContent=all.filter(o=>o.status==='attente_retrait'||o.status==='en_livraison').length;
   document.getElementById('sTot').textContent=all.reduce((s,o)=>s+(o.total||0),0).toLocaleString('fr-FR')+' MRU';
   const n=all.filter(o=>o.status==='envoye').length;
   const badge=document.getElementById('badgeNew');
@@ -322,8 +323,8 @@ function updateStats(){
 // ── STATUS LABELS ──
 const STATUS_LABELS={
   envoye:'📤 Nouvelle',confirme:'✅ Confirmée',
-  preparation:'🍳 Préparation',livraison:'🛵 En livraison',
-  livre:'🎉 Livrée',annule:'❌ Annulée'
+  preparation:'🍳 Préparation',attente_retrait:'🟠 Attente retrait',
+  en_livraison:'🛵 En livraison',livre:'🎉 Livrée',annule:'❌ Annulée'
 };
 
 // ── RENDER ──
@@ -343,12 +344,12 @@ function renderOrders(){
     const itemsHtml=(order.items||[]).map(it=>`<div class="citem-row"><span>${it.name} × ${it.qty}</span><span>${it.subtotal} MRU</span></div>`).join('');
     const mapBtn=order.localisation?`<button class="ca-map" onclick="window.open('${order.localisation.mapsLink}','_blank')">📍 Maps (${order.localisation.distance} km)</button>`:'';
 
-    // Status buttons — 4 action buttons (all except 'envoye')
     const statusActions=[
-      {key:'confirme',   label:'✅ Confirmer',        cls:'btn-st-confirme'},
-      {key:'preparation',label:'🍳 En préparation',   cls:'btn-st-preparation'},
-      {key:'livraison',  label:'🛵 En livraison',     cls:'btn-st-livraison'},
-      {key:'livre',      label:'🎉 Livrée',            cls:'btn-st-livre'},
+      {key:'confirme',        label:'✅ Confirmer',          cls:'btn-st-confirme'},
+      {key:'preparation',     label:'🍳 En préparation',     cls:'btn-st-preparation'},
+      {key:'attente_retrait', label:'🟠 Attente retrait',    cls:'btn-st-attente'},
+      {key:'en_livraison',    label:'🛵 En livraison',       cls:'btn-st-livraison'},
+      {key:'livre',           label:'🎉 Livrée',             cls:'btn-st-livre'},
     ];
 
     const statusBtnsHtml=statusActions.map(s=>`
@@ -397,10 +398,16 @@ function renderOrders(){
 window.setStatus=async function(key,status){
   try{
     await update(ref(db,`commandes/${key}`),{status});
-    // Si livrée, supprimer automatiquement après 30 secondes
+    if(orders[key]) orders[key].status=status;
+    renderOrders(); updateStats();
+    // Supprimer après 30s si livrée
     if(status==='livre'){
       setTimeout(async()=>{
-        try{ await remove(ref(db,`commandes/${key}`)); }catch(e){}
+        try{
+          await remove(ref(db,`commandes/${key}`));
+          delete orders[key];
+          renderOrders(); updateStats();
+        }catch(e){}
       }, 30000);
     }
   }catch(e){alert('Erreur: '+e.message);}
@@ -409,8 +416,17 @@ window.setStatus=async function(key,status){
 window.cancelOrder=async function(key){
   if(!confirm('Annuler cette commande ? Le client sera informé.'))return;
   try{
-    // On met status "annule" plutôt que supprimer — le client verra "Annulée"
     await update(ref(db,`commandes/${key}`),{status:'annule'});
+    if(orders[key]) orders[key].status='annule';
+    renderOrders(); updateStats();
+    // Supprimer après 30s
+    setTimeout(async()=>{
+      try{
+        await remove(ref(db,`commandes/${key}`));
+        delete orders[key];
+        renderOrders(); updateStats();
+      }catch(e){}
+    }, 30000);
   }catch(e){alert('Erreur: '+e.message);}
 };
 </script>
