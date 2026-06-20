@@ -4,48 +4,45 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Commandes Live – Latte Lounge</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700;900&family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:#0D0D0D; --surface:#161616; --card:#1E1E1E; --border:#2A2A2A;
-    --gold:#C9A84C; --gold2:#F0D080; --red:#D64045; --green:#3DAA6E;
-    --orange:#E07B39; --blue:#3A7BD5; --purple:#8B5CF6;
-    --text:#F0EDE8; --muted:#888;
+    --bg:      #F5F0E8;
+    --surface: #FFFFFF;
+    --card:    #EDE6D6;
+    --border:  rgba(184,148,42,.25);
+    --navy:    #1B2A4A;
+    --navy2:   #243558;
+    --gold:    #B8942A;
+    --gold2:   #D4AF5A;
+    --gold3:   #F0D080;
+    --red:     #C0392B;
+    --green:   #27AE60;
+    --orange:  #E07B39;
+    --blue:    #2980B9;
+    --purple:  #8B5CF6;
+    --text:    #1B2A4A;
+    --muted:   #8A7A6A;
   }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 
-  /* ── LOGIN ── */
-  #loginScreen{position:fixed;inset:0;z-index:999;background:linear-gradient(135deg,#0a0800,#1a1200);display:flex;flex-direction:column;align-items:center;justify-content:center;}
-  .lg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,rgba(201,168,76,.15),transparent 65%);pointer-events:none;}
-  .ll{font-family:'Playfair Display',serif;font-size:34px;font-weight:900;color:var(--gold);letter-spacing:4px;margin-bottom:4px;position:relative;}
-  .ls{font-size:11px;color:var(--muted);letter-spacing:4px;margin-bottom:36px;position:relative;}
-  .lb{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:30px 34px;width:320px;box-shadow:0 30px 80px rgba(0,0,0,.6);}
-  .lt{font-family:'Playfair Display',serif;font-size:18px;color:var(--text);text-align:center;margin-bottom:6px;}
-  .lh{font-size:12px;color:var(--muted);text-align:center;margin-bottom:22px;}
-  .lw{position:relative;margin-bottom:12px;}
-  .li{width:100%;padding:12px 42px 12px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Mono',monospace;font-size:16px;letter-spacing:3px;outline:none;transition:border-color .2s;}
-  .li:focus{border-color:var(--gold);}
-  .li::placeholder{letter-spacing:1px;font-size:13px;color:var(--muted);font-family:'DM Sans',sans-serif;}
-  .le-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;}
-  .le{color:var(--red);font-size:12px;text-align:center;margin-bottom:10px;min-height:16px;}
-  .lbtn{width:100%;padding:13px;background:var(--gold);border:none;border-radius:10px;font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#000;cursor:pointer;}
-  .lbtn:hover{background:var(--gold2);}
+  /* ── LOGIN (retiré) ── */
 
   /* ── SOUND UNLOCK BANNER ── */
-  #soundBanner{background:linear-gradient(135deg,#1a0a00,#2d1500);border-bottom:2px solid var(--orange);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  #soundBanner{background:linear-gradient(135deg,#FDF4E8,#FBEAD4);border-bottom:2px solid var(--orange);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
   .sound-unlock-btn{background:var(--orange);border:none;border-radius:10px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:10px 20px;cursor:pointer;transition:all .2s;}
   .sound-unlock-btn:hover{filter:brightness(1.1);}
   #soundBanner.hidden{display:none;}
 
   /* ── HEADER ── */
-  header{background:linear-gradient(135deg,#1a1200,#2d1f00,#1a1200);border-bottom:1px solid var(--gold);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50;}
-  .hlogo{font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:var(--gold);letter-spacing:3px;}
-  .hsublogo{font-size:10px;color:var(--muted);letter-spacing:2px;}
+  header{background:linear-gradient(135deg,#0d1a30,#1B2A4A,#0d1a30);border-bottom:2px solid var(--gold);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50;}
+  .hlogo{font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:var(--gold3);letter-spacing:3px;}
+  .hsublogo{font-size:10px;color:rgba(255,255,255,.5);letter-spacing:2px;}
   .hright{display:flex;align-items:center;gap:8px;}
   .badge-new{background:var(--red);color:#fff;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;border-radius:20px;padding:4px 12px;animation:blink 1s infinite;display:none;}
   @keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
-  .hclock{font-family:'DM Mono',monospace;font-size:13px;color:var(--gold2);}
+  .hclock{font-family:'DM Mono',monospace;font-size:13px;color:var(--gold3);}
   .hbtn{background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:12px;padding:5px 12px;cursor:pointer;}
   .hbtn:hover{border-color:var(--red);color:var(--red);}
 
@@ -92,7 +89,7 @@
   .cinfo{padding:10px 16px;border-bottom:1px solid var(--border);background:var(--card);}
   .cinfo-name{font-size:13px;font-weight:600;}
   .cinfo-phone{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin-top:2px;}
-  .cinfo-pay{font-size:11px;color:var(--gold2);margin-top:3px;}
+  .cinfo-pay{font-size:11px;color:var(--gold);font-weight:600;margin-top:3px;}
 
   /* Items */
   .citems{padding:10px 16px;border-bottom:1px solid var(--border);}
@@ -101,7 +98,7 @@
   .ctotal{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--card);border-bottom:1px solid var(--border);}
   .ctotal-left{font-size:12px;color:var(--muted);}
   .ctotal-val{font-family:'DM Mono',monospace;font-size:16px;color:var(--gold);font-weight:700;}
-  .cnotes{padding:8px 16px;font-size:12px;color:var(--gold2);background:rgba(201,168,76,.05);border-bottom:1px solid var(--border);}
+  .cnotes{padding:8px 16px;font-size:12px;color:var(--navy);background:rgba(184,148,42,.1);border-bottom:1px solid var(--border);}
 
   /* ── STATUS BUTTONS — clearly visible ── */
   .cstatus{padding:14px 16px;border-bottom:1px solid var(--border);}
@@ -109,7 +106,7 @@
   .cstatus-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
   .cstatus-grid button{padding:10px 6px;border-radius:10px;border:2px solid transparent;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;text-align:center;}
   .cstatus-grid button:hover{transform:scale(1.03);}
-  .cstatus-grid button.current{border-color:#fff!important;transform:scale(1.05);box-shadow:0 4px 12px rgba(0,0,0,.3);}
+  .cstatus-grid button.current{border-color:var(--navy)!important;transform:scale(1.05);box-shadow:0 4px 12px rgba(27,42,74,.25);}
   .btn-st-confirme   {background:var(--blue);   color:#fff;}
   .btn-st-preparation{background:var(--orange);  color:#fff;}
   .btn-st-attente    {background:#E07B39;         color:#fff;}
@@ -130,22 +127,6 @@
 <body>
 
 <!-- LOGIN -->
-<div id="loginScreen">
-  <div class="lg"></div>
-  <div class="ll">Latte Lounge</div>
-  <div class="ls">COMMANDES EN LIGNE · TEMPS RÉEL</div>
-  <div class="lb">
-    <div class="lt">🔐 Accès Gestionnaire</div>
-    <div class="lh">Entrez votre mot de passe</div>
-    <div class="lw">
-      <input class="li" type="password" id="pwdInput" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')checkPwd()">
-      <button class="le-btn" onclick="togglePwd()">👁</button>
-    </div>
-    <div class="le" id="loginError"></div>
-    <button class="lbtn" onclick="checkPwd()">Accéder →</button>
-  </div>
-</div>
-
 <!-- SOUND UNLOCK BANNER -->
 <div id="soundBanner">
   <div>
@@ -164,7 +145,6 @@
   <div class="hright">
     <span class="badge-new" id="badgeNew">0 nouvelle(s)</span>
     <div class="hclock" id="clock2">--:--:--</div>
-    <button class="hbtn" onclick="logout()">⏏ Déco</button>
   </div>
 </header>
 
@@ -198,7 +178,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onChildAdded, onChildChanged, onChildRemoved, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const PASSWORD = 'Mauritanie2026';
 const FB = {
   apiKey:"AIzaSyBZnorgx0FgFzQk-ynMWLWAGblA1797wL8",
   authDomain:"latte-lounge-caisse.firebaseapp.com",
@@ -212,29 +191,8 @@ const FB = {
 let db, orders={}, currentFilter='tous', isFirstLoad=true;
 let audioCtx=null, soundUnlocked=false;
 
-// ── AUTH ──
-window.checkPwd=function(){
-  const val=document.getElementById('pwdInput').value;
-  if(val===PASSWORD){
-    const ls=document.getElementById('loginScreen');
-    ls.style.transition='opacity .4s';ls.style.opacity='0';
-    setTimeout(()=>{ls.style.display='none';},400);
-    sessionStorage.setItem('orders_auth','1');
-    startFirebase();
-  } else {
-    const err=document.getElementById('loginError');
-    err.textContent='❌ Mot de passe incorrect';
-    document.getElementById('pwdInput').value='';
-    setTimeout(()=>err.textContent='',3000);
-  }
-};
-window.togglePwd=function(){const i=document.getElementById('pwdInput');i.type=i.type==='password'?'text':'password';};
-window.logout=function(){if(!confirm('Se déconnecter ?'))return;sessionStorage.removeItem('orders_auth');location.reload();};
-
-if(sessionStorage.getItem('orders_auth')==='1'){
-  document.getElementById('loginScreen').style.display='none';
-  startFirebase();
-}
+// ── DÉMARRAGE DIRECT (sans mot de passe) ──
+startFirebase();
 
 // ── CLOCK ──
 setInterval(()=>document.getElementById('clock2').textContent=new Date().toLocaleTimeString('fr-FR'),1000);
